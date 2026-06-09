@@ -12,7 +12,7 @@ export const connectDB = async () => {
   console.log("MongoDB Connected");
 };
 
-export const getDB = async () => {
+export const getDB = () => {
   if (!db) {
     throw new Error("Database connection not initialized");
   }
