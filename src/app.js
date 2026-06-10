@@ -15,7 +15,7 @@ app.get("/", (req, res, next) => {
 });
 
 //routes
-app.use("/users", userRoutes);
+app.use("/api/v1/users", userRoutes);
 
 app.use((req, res, next) => {
   //if routes not matched
