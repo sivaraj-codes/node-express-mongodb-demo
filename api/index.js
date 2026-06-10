@@ -1,7 +1,0 @@
-import { connectDB } from "../src/config/db.js";
-import app from "../src/app.js";
-
-await connectDB();
-
-export default app;
-//for vercel serverless function alone
