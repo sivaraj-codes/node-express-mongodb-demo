@@ -3,6 +3,7 @@ import cors from "cors";
 import userRoutes from "./features/users/user.route.js";
 import { errorHandler } from "./shared/middlewares/errorHandler.js";
 import { HTTP_STATUS } from "./constants/responseConstants.js";
+import { AppError } from "./shared/errors/AppError.js";
 
 const app = express();
 
