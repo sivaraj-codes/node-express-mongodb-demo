@@ -21,7 +21,7 @@ express-demo/
 │   ├── config/
 │   │   └── db.js                    ← MongoDB connection singleton
 │   ├── constants/
-│   │   ├── httpStatus.js            ← HTTP status codes (no magic numbers)
+│   │   ├── responseConstants.js            ← HTTP status codes (no magic numbers)
 │   │   └── dbCollections.js         ← Collection name strings
 │   ├── features/
 │   │   └── users/                   ← One folder per domain/resource
@@ -233,7 +233,7 @@ err.statusCode || 500 → sendError(res, message, statusCode)
 
 ---
 
-### `constants/httpStatus.js` — No Magic Numbers
+### `constants/responseConstants.js` — No Magic Numbers
 ```js
 // Bad
 throw new AppError("Conflict", 409);
