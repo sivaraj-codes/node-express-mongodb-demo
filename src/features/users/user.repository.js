@@ -1,5 +1,5 @@
 import { getDB } from "../../config/db.js";
-import { DB_COLLECTIONS } from "../../constants/dbCOllections.js";
+import { DB_COLLECTIONS } from "../../constants/dbCollections.js";
 
 export const findAll = async () => {
   const db = getDB();
