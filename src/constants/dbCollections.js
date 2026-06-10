@@ -1,3 +1,3 @@
 export const DB_COLLECTIONS = {
-  USERS: "users",
+  demoDB: { USERS: "users" },
 };

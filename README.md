@@ -89,6 +89,7 @@ express-demo/
 ## Each Layer — One Job Only
 
 ### `server.js` — The Ignition Key
+
 **Job:** Boot in the right order. Nothing else.
 
 ```
@@ -100,11 +101,12 @@ DB connect → app.listen → crash loudly if either fails
 - `process.exit(1)` on failure so Docker/PM2 knows to restart
 - Does not import routes, controllers, or services
 
-**Memory hook:** *"Start the car, don't build it."*
+**Memory hook:** _"Start the car, don't build it."_
 
 ---
 
 ### `src/app.js` — The Express Configuration
+
 **Job:** Set up the Express instance. Mount middleware and routes.
 
 ```
@@ -116,11 +118,12 @@ create app → apply middleware → mount routes → attach error handler → ex
 - Error handler middleware always goes **last** (4 params: `err, req, res, next`)
 - No business logic. No DB calls. No imports from `features/`
 
-**Memory hook:** *"The blueprint of the app, not the behaviour."*
+**Memory hook:** _"The blueprint of the app, not the behaviour."_
 
 ---
 
 ### `user.route.js` — The URL Map
+
 **Job:** Define which HTTP method + path maps to which controller function.
 
 ```
@@ -132,11 +135,12 @@ POST /users        → userController.createUser
 - No logic. No service calls. Just the mapping.
 - Imported and mounted in `app.js`
 
-**Memory hook:** *"The menu. Not the kitchen."*
+**Memory hook:** _"The menu. Not the kitchen."_
 
 ---
 
 ### `user.controller.js` — The HTTP Translator
+
 **Job:** Translate an HTTP request into a function call, then translate the result back into an HTTP response.
 
 ```
@@ -148,11 +152,12 @@ read from req → call service → send response (or next(error))
 - Always wraps in `try/catch` and calls `next(error)` on failure
 - Uses `sendSuccess()` / `sendError()` for consistent response shape
 
-**Memory hook:** *"Translator between HTTP world and JS world."*
+**Memory hook:** _"Translator between HTTP world and JS world."_
 
 ---
 
 ### `user.service.js` — The Business Logic
+
 **Job:** Own all rules about how the application behaves.
 
 ```
@@ -164,11 +169,12 @@ validate input → check business constraints → call repository → return res
 - Orchestrates multiple repository calls if needed
 - This is where "a user cannot register twice" lives — not in the controller, not in the repository
 
-**Memory hook:** *"If a PM describes it, it lives here."*
+**Memory hook:** _"If a PM describes it, it lives here."_
 
 ---
 
 ### `user.repository.js` — The Data Access Layer
+
 **Job:** Talk to the database. Nothing else.
 
 ```
@@ -180,11 +186,12 @@ getDB() → run query → return raw result
 - Receives plain data, returns plain data
 - If you swap MongoDB for PostgreSQL tomorrow, only this file changes
 
-**Memory hook:** *"The only file that speaks MongoDB."*
+**Memory hook:** _"The only file that speaks MongoDB."_
 
 ---
 
 ### `config/db.js` — The Connection Singleton
+
 **Job:** Create and reuse a single MongoDB connection.
 
 ```
@@ -196,11 +203,12 @@ else → connect → store → return
 - `getDB()` called in every repository function
 - Throws if `getDB()` is called before `connectDB()` — this is intentional
 
-**Memory hook:** *"One connection, shared everywhere."*
+**Memory hook:** _"One connection, shared everywhere."_
 
 ---
 
 ### `shared/errors/AppError.js` — The Custom Error
+
 **Job:** Carry a `statusCode` alongside the error message.
 
 ```js
@@ -213,11 +221,12 @@ throw new AppError("User not found", 404);
 - `statusCode` is used by `errorHandler` to set the HTTP response status
 - Never do `res.status(404).json(...)` inside a service — throw AppError instead
 
-**Memory hook:** *"A smarter Error that knows its HTTP status."*
+**Memory hook:** _"A smarter Error that knows its HTTP status."_
 
 ---
 
 ### `shared/middlewares/errorHandler.js` — The Safety Net
+
 **Job:** Catch every unhandled error in the app and send a clean response.
 
 ```
@@ -229,11 +238,12 @@ err.statusCode || 500 → sendError(res, message, statusCode)
 - Never throws. Always responds.
 - In Express 5, async errors are caught automatically — no need for `try/catch` in every controller (though it's still good practice)
 
-**Memory hook:** *"The last line of defence."*
+**Memory hook:** _"The last line of defence."_
 
 ---
 
 ### `constants/responseConstants.js` — No Magic Numbers
+
 ```js
 // Bad
 throw new AppError("Conflict", 409);
@@ -242,33 +252,34 @@ throw new AppError("Conflict", 409);
 throw new AppError("Conflict", HTTP_STATUS.CONFLICT);
 ```
 
-**Memory hook:** *"Names instead of numbers."*
+**Memory hook:** _"Names instead of numbers."_
 
 ---
 
 ### `constants/dbCollections.js` — Single Source of Truth
+
 ```js
 // Bad — "users" repeated in 3 repository functions
-db.collection("users")
+db.collection("users");
 
 // Good — change in one place
-db.collection(DB_COLLECTIONS.USERS)
+db.collection(DB_COLLECTIONS.demoDB.USERS);
 ```
 
-**Memory hook:** *"One place to rename a collection."*
+**Memory hook:** _"One place to rename a collection."_
 
 ---
 
 ## The Rules to Never Break
 
-| Rule | Why |
-|------|-----|
-| Controller never calls `getDB()` directly | Repository is the only DB speaker |
-| Service never touches `req` or `res` | Services are reusable outside HTTP (queues, cron jobs) |
-| Repository never throws `AppError` | DB errors are raw, business errors are AppError |
-| `errorHandler` always last in `app.js` | Express processes middleware in order |
-| `connectDB()` always before `app.listen()` | No requests before DB is ready |
-| Constants over magic numbers/strings | Searchable, renameable, self-documenting |
+| Rule                                       | Why                                                    |
+| ------------------------------------------ | ------------------------------------------------------ |
+| Controller never calls `getDB()` directly  | Repository is the only DB speaker                      |
+| Service never touches `req` or `res`       | Services are reusable outside HTTP (queues, cron jobs) |
+| Repository never throws `AppError`         | DB errors are raw, business errors are AppError        |
+| `errorHandler` always last in `app.js`     | Express processes middleware in order                  |
+| `connectDB()` always before `app.listen()` | No requests before DB is ready                         |
+| Constants over magic numbers/strings       | Searchable, renameable, self-documenting               |
 
 ---
 
@@ -316,4 +327,4 @@ Work from the **error message outward**, not from the URL inward.
 
 ---
 
-*This architecture is called **layered architecture** (also known as N-tier). The same pattern applies whether you use MongoDB, PostgreSQL, or any other database. Only the repository changes — everything else stays the same.*
+_This architecture is called **layered architecture** (also known as N-tier). The same pattern applies whether you use MongoDB, PostgreSQL, or any other database. Only the repository changes — everything else stays the same._
