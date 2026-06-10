@@ -1,3 +1,4 @@
+import { HTTP_STATUS, MESSAGES } from "../../constants/responseConstants.js";
 import { sendSuccess } from "../../shared/utils/handlers.js";
 import * as userService from "./user.service.js";
 
@@ -8,9 +9,9 @@ export const getUsers = async (req, res, next) => {
     // res.json(users);
     sendSuccess({
       res,
-      statusCode: 200,
+      statusCode: HTTP_STATUS.OK,
       data: users,
-      message: "users list fetched succesfully",
+      message: MESSAGES.USER_LIST_FETCHED,
     });
   } catch (error) {
     next(error);
@@ -25,9 +26,9 @@ export const createUser = async (req, res, next) => {
 
     sendSuccess({
       res,
-      statusCode: 201,
+      statusCode: HTTP_STATUS.CREATED,
       data: user,
-      message: "user added succesfully",
+      message: MESSAGES.USER_CREATED,
     });
   } catch (error) {
     next(error);

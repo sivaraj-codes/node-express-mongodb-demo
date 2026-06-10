@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import userRoutes from "./features/users/user.route.js";
 import { errorHandler } from "./shared/middlewares/errorHandler.js";
+import { HTTP_STATUS } from "./constants/responseConstants.js";
 
 const app = express();
 
@@ -14,6 +15,11 @@ app.get("/", (req, res, next) => {
 
 //routes
 app.use("/users", userRoutes);
+
+app.use((req, res, next) => {
+  //if routes not matched
+  next(new AppError(`Cannot ${req.method} ${req.path}`, HTTP_STATUS.NOT_FOUND));
+});
 
 //last for error
 app.use(errorHandler);

@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from "../../constants/responseConstants.js";
 import { AppError } from "../../shared/errors/AppError.js";
 import * as userRepository from "./user.repository.js";
 
@@ -7,13 +8,13 @@ export const getUsers = async () => {
 
 export const createUser = async (userData) => {
   if (!userData.name) {
-    throw new AppError("Name is required", 400);
+    throw new AppError("Name is required", HTTP_STATUS.BAD_REQUEST);
   }
 
   const existingUser = await userRepository.findByEmail(userData.email);
 
   if (existingUser) {
-    throw new AppError("User already exists", 409);
+    throw new AppError("User already exists", HTTP_STATUS.CONFLICT);
   }
 
   return userRepository.create(userData);
