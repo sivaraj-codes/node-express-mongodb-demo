@@ -17,5 +17,6 @@ export function getDB(dbName = process.env.DB_NAME) {
     throw new Error("Database connection not initialized");
   }
 
+  if (!dbName) throw new Error("Invalid DB");
   return client.db(dbName);
 }
