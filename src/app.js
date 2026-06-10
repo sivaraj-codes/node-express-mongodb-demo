@@ -17,12 +17,11 @@ app.get("/", (req, res, next) => {
 //routes
 app.use("/api/v1/users", userRoutes);
 
+//last for unmatched route and error
 app.use((req, res, next) => {
   //if routes not matched
   next(new AppError(`Cannot ${req.method} ${req.path}`, HTTP_STATUS.NOT_FOUND));
 });
-
-//last for error
 app.use(errorHandler);
 
 export default app;
