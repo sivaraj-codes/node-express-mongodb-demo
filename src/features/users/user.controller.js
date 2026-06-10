@@ -9,8 +9,8 @@ export const getUsers = async (req, res, next) => {
     // res.json(users);
     sendSuccess({
       res,
-      statusCode: HTTP_STATUS.OK,
       data: users,
+      statusCode: HTTP_STATUS.OK,
       message: MESSAGES.USER_LIST_FETCHED,
     });
   } catch (error) {
@@ -20,14 +20,15 @@ export const getUsers = async (req, res, next) => {
 
 export const createUser = async (req, res, next) => {
   try {
+    console.log("REQ", req);
     const user = await userService.createUser(req.body);
 
     // res.status(201).json(user);
 
     sendSuccess({
       res,
-      statusCode: HTTP_STATUS.CREATED,
       data: user,
+      statusCode: HTTP_STATUS.CREATED,
       message: MESSAGES.USER_CREATED,
     });
   } catch (error) {
