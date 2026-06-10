@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import userRoutes from "./features/users/user.route.js";
 import { errorHandler } from "./shared/middlewares/errorHandler.js";
-import { connectDB } from "./config/db.js";
 
 const app = express();
 
